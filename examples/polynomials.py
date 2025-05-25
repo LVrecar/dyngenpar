@@ -10,7 +10,7 @@ def main(log_level):
     rules, terminals = utils.grammar_from_string(grammars.polynomial_grammar)
     parser = dyngenpar.Parser(rules, terminals, "Poly", log_level)
     input_sentence = "- 2 x * x * x + x - 1".split(" ")
-    trees = parser.parse(input_sentence)
+    continuations, trees = parser.parse(input_sentence)
     utils.print_all_trees(trees)
 
 

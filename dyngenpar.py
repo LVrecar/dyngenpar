@@ -518,6 +518,11 @@ class Parser():
         """
         self.log(f"processContinuation({continuation}, {trees})", increment=START)
         # STEP 1
+        if not trees:
+            self.log("empty set of trees")
+            self.log(f"processContinuation({continuation}, {trees}) returning ({frozenset()}, {frozenset()})", increment=END)
+            return frozenset(), frozenset()
+        # STEP 2
         if continuation.label == 'done':
             self.log("C = done")
             self.log(f"processContinuation({continuation}, {trees}) returning ({frozenset()}, {trees})", increment=END)
@@ -525,38 +530,37 @@ class Parser():
         
         new_continuations: frozenset[Continuation] = frozenset()
         new_trees: frozenset[Tree] = frozenset()
-        # STEP 2
+        # STEP 3
         if continuation.label == 'match':
             new_continuations, new_trees = self.map_unzip(self.match, [(None, MatchContinuation(continuation.parent, continuation.edge_label, continuation.trees + [tree])) for tree in trees])
             self.log(f"C_new = {new_continuations}, T_new = {new_trees}", INTERMEDIATE_RESULTS)
         
-        # STEP 3
+        # STEP 4
         elif continuation.label == 'reduce':
             new_continuations, new_trees = self.map_unzip(self.reduce, [(tree, continuation) for tree in trees])
             self.log(f"C_new = {new_continuations}, T_new = {new_trees}", INTERMEDIATE_RESULTS)
         
-        # STEP 4
+        # STEP 5
         c_prime, t_prime = self.process_continuation(continuation.parent, new_trees)
         self.log(f"C' = {c_prime}, T' = {t_prime}", INTERMEDIATE_RESULTS)
 
-        # STEP 5
+        # STEP 6
         self.log(f"processContinuation({continuation}, {trees}) returning ({c_prime.union(new_continuations)}, {t_prime})", increment=END)
         return (c_prime.union(new_continuations), t_prime)
 
-    def parse(self, input_sentence: Iterable[str]) -> frozenset[Tree]:
+    def parse(self, input_sentence: Iterable[str]) -> tuple[frozenset[Continuation], frozenset[Tree]]:
         """Given an input sentence, `parse` returns the set of all possible parse trees.
 
         :param input_sentence: A sequence of symbols, representing the input.
         :type input_sentence: Iterable[str]
-        :return: A set of all parse trees for the input sentence.
-        :rtype: frozenset[Tree]
+        :return: A set of continuations and a set of trees.
+        :rtype: tuple[frozenset[Continuation], frozenset[Tree]]
         """
         self.log(f"parse({input_sentence})", increment=START)
         # STEP 1
         continuations: frozenset[Continuation] = frozenset({ReduceContinuation(DoneContinuation(), self.start_symbol)})
         trees = self.epsilon_trees(self.start_symbol)
         self.log(f"C_0 = {continuations}, T_0 = {trees}", INTERMEDIATE_RESULTS)
-        
         pos = 0
         # STEP 2
         for term in input_sentence:
@@ -570,5 +574,5 @@ class Parser():
             # self.log(f"""New parse state is:\nInput: {input_sentence}\nposition: {pos}\ncontinuations {len(continuations)}:\n{'\n\n'.join([str(c) for c in continuations])}\ntrees: {len(trees)}\n{'\n\n'.join([str(tree) for tree in trees])}""")
             pos += 1
         # STEP 3
-        self.log(f"parse({input_sentence}) returning {trees}")
-        return trees
+        self.log(f"parse({input_sentence}) returning ({continuations}, {trees})")
+        return continuations, trees

@@ -44,6 +44,15 @@ C: EMPTY
 D: EMPTY
 """
 
+test_grammar5 = """
+S: E
+E: E1 | e
+E1: E2
+E2: E3
+E3: E4
+E4: E
+"""
+
 tomita_grammar = """
 S: NP VP
 S: S PP
