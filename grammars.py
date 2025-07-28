@@ -1,10 +1,10 @@
 polynomial_grammar = """
 Poly: Poly + Term | Poly - Term | Term
-Term: Coefficient XPower | Coefficient | XPower
-Coefficient: Sign NUMBER
+Term: Coef XPow | Coef | XPow
+Coef: Sign Num
 Sign: EMPTY | -
-XPower: x | XPower * XPower
-NUMBER: 2 | 1
+XPow: x | XPow * XPow
+Num: 2 | 1
 """
 
 nullable_grammar = """
@@ -42,15 +42,6 @@ A: D A | C | EMPTY
 B: b
 C: EMPTY
 D: EMPTY
-"""
-
-test_grammar5 = """
-S: E
-E: E1 | e
-E1: E2
-E2: E3
-E3: E4
-E4: E
 """
 
 tomita_grammar = """

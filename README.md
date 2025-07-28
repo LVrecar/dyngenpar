@@ -1,5 +1,5 @@
 # DynGenPar Implementation
-This repository contains a Python implementation of the parsing algorithm defined [here](https://www.macs.hw.ac.uk/~lv21/papers/lv-cicm25-paper.pdf).
+This repository contains a Python implementation of the parsing algorithm defined in `paper.pdf`.
 It is intended to showcase the algorithm working on some example grammars and input to demonstrate its capabilities.
 A crucial difference between this implementation and the description provided in the paper above is that the grammar used by the parser is not passed to each function explicitly.
 Instead, all functions are methods of a `Parser` object, which has parameters `rules`, `terminals`, and `start_symbol`, which the methods then have access to.
